@@ -628,6 +628,8 @@ class AudioPlayer : Fragment(), PlaylistAdapter.IPlayer, TextWatcher, IAudioPlay
      */
     private fun updateProgress(progress: PlaybackProgress) {
         if (playlistModel.currentMediaPosition == -1) return
+        (childFragmentManager.findFragmentByTag("online_lyrics") as? LyricsDialogFragment)
+            ?.updatePlaybackPosition(progress.time)
         binding.length.text = if (showRemainingTime) Tools.millisToString(progress.time - progress.length) else progress.lengthText
         binding.timeline.max = progress.length.toInt()
         binding.progressBar.max = progress.length.toInt()
