@@ -253,6 +253,7 @@ class AudioPlayer : Fragment(), PlaylistAdapter.IPlayer, TextWatcher, IAudioPlay
         binding.audioMediaSwitcher.setAudioMediaSwitcherListener(headerMediaSwitcherListener)
         binding.coverMediaSwitcher.setAudioMediaSwitcherListener(coverMediaSwitcherListener)
         binding.playlistSearchText.editText?.addTextChangedListener(this)
+        binding.lyricsQuickAction.setOnClickListener { showLyrics() }
         binding.header.setOnClickListener {
             val activity = activity as AudioPlayerContainerActivity
             activity.slideUpOrDownAudioPlayer()
@@ -766,6 +767,14 @@ class AudioPlayer : Fragment(), PlaylistAdapter.IPlayer, TextWatcher, IAudioPlay
         bookmark?.let {
             bookmarkModel.service?.setTime(it.time)
         }
+    }
+
+    private fun showLyrics() {
+        val title = playlistModel.title
+        val artist = playlistModel.artist
+        val durationMs = playlistModel.progress.value?.length ?: 0L
+        LyricsDialogFragment.newInstance(title, artist, durationMs)
+            .show(childFragmentManager, "online_lyrics")
     }
 
     fun onPlayPauseClick(@Suppress("UNUSED_PARAMETER") view: View?) {
