@@ -380,25 +380,23 @@ class AudioPlayer : Fragment(), PlaylistAdapter.IPlayer, TextWatcher, IAudioPlay
     fun isTablet() = requireActivity().isTablet()
 
     fun showChips() {
-        if (playlistModel.speed.value == 1.0F && PlaybackService.playerSleepTime.value == null) {
-            binding.playbackChips.setGone()
+        // Keep the group available for the always-visible Lyrics action.
+        binding.playbackChips.setVisible()
+        binding.playbackSpeedQuickAction.setGone()
+        binding.sleepQuickAction.setGone()
+
+        playlistModel.speed.value?.let {
+            if (it != 1.0F) binding.playbackSpeedQuickAction.setVisible()
+            binding.playbackSpeedQuickAction.text = it.formatRateString()
+        }
+        if (settings.getBoolean(KEY_PLAYBACK_SPEED_AUDIO_GLOBAL, false)) {
+            binding.playbackSpeedQuickAction.chipIcon = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_speed_all)
         } else {
-            binding.playbackChips.setVisible()
-            binding.playbackSpeedQuickAction.setGone()
-            binding.sleepQuickAction.setGone()
-            playlistModel.speed.value?.let {
-                if (it != 1.0F) binding.playbackSpeedQuickAction.setVisible()
-                binding.playbackSpeedQuickAction.text = it.formatRateString()
-            }
-            if (settings.getBoolean(KEY_PLAYBACK_SPEED_AUDIO_GLOBAL, false)) {
-                binding.playbackSpeedQuickAction.chipIcon = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_speed_all)
-            } else {
-                binding.playbackSpeedQuickAction.chipIcon = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_speed)
-            }
-            PlaybackService.playerSleepTime.value?.let {
-                binding.sleepQuickAction.setVisible()
-                binding.sleepQuickAction.text = DateFormat.getTimeFormat(requireContext()).format(it.time)
-            }
+            binding.playbackSpeedQuickAction.chipIcon = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_speed)
+        }
+        PlaybackService.playerSleepTime.value?.let {
+            binding.sleepQuickAction.setVisible()
+            binding.sleepQuickAction.text = DateFormat.getTimeFormat(requireContext()).format(it.time)
         }
     }
 
