@@ -1,0 +1,63 @@
+name: Android build
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build packages
+        run: |
+          yes | sdkmanager --licenses >/dev/null || true
+          sdkmanager --install \
+            'platform-tools' \
+            'platforms;android-36' \
+            'build-tools;36.0.0' \
+            'ndk;21.4.7075529' \
+            'cmake;3.22.1'
+
+      - name: Prepare VLC Android build environment
+        run: |
+          export ANDROID_SDK="$ANDROID_HOME"
+          export ANDROID_NDK="$ANDROID_HOME/ndk/21.4.7075529"
+          sh buildsystem/compile.sh --init
+
+      - name: Build Android APKs
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Run lyrics parser unit tests
+        run: ./gradlew :application:vlc-android:testDebugUnitTest --stacktrace
+
+      - name: Upload debug APKs
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vlc-player-debug-apks
+          path: application/app/build/outputs/apk/**/*.apk
+          if-no-files-found: error
+          retention-days: 7
