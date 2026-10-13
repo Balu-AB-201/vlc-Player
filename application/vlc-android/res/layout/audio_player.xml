@@ -413,6 +413,19 @@
                         app:iconStartPadding="8dp"
                         tools:text="12h55AM"
                         tools:visibility="visible" />
+                <com.google.android.material.chip.Chip
+                        android:id="@+id/lyrics_quick_action"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:text="Lyrics"
+                        android:textColor="?attr/audio_chips_text_color"
+                        app:chipBackgroundColor="?attr/audio_chips_color"
+                        app:chipIcon="@drawable/ic_subtitle"
+                        app:chipIconTint="?attr/audio_chips_text_color"
+                        app:iconStartPadding="8dp" />
+
             </com.google.android.material.chip.ChipGroup>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
