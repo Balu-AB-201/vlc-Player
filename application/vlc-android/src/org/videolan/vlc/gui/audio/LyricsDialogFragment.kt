@@ -20,7 +20,6 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import org.videolan.vlc.lyrics.LrcParser
 import org.videolan.vlc.lyrics.LyricsRepository
-import org.videolan.vlc.lyrics.TimedLyricLine
 import java.util.Locale
 
 private const val ARG_TITLE = "lyrics_title"
